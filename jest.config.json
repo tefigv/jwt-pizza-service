@@ -1,0 +1,4 @@
+{
+    "collectCoverage": true,
+    "coverageResports": ["json-summary", "text"]
+}
