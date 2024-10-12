@@ -32,7 +32,6 @@ function randomName() {
     //register new user and use his auth token probably overkill, definitely actually
     const registerRes = await request(app).post('/api/auth').send(testUser);
     testUserAuthToken = registerRes.body.token;
-   // userID = registerRes.body.id;
   });  
 
   test("get pizza menu",async ()=>{
@@ -49,12 +48,27 @@ function randomName() {
    test("Successfully add an item to the menu ",async ()=>{
 
     //current admin user is not working so using another admin account to sign in
-    // let tempUserAuthorizedToSignIn = await request(app).put('/api/auth').send({"email":"j12ehy3v3p@admin.com", "password":"toomanysecrets"});
-    // let tempToken = tempUserAuthorizedToSignIn.body.token;
-   // console.log(tempUserAuthorizedToSignIn.body);
 
     let newItemOnMenu = { "title":"Student", "description": "Everything on the burger please", "image":"nunya.png", "price": 0.0001 }
        const correctMenuResponse = await request(app).put("/api/order/menu").set('Authorization', `Bearer ${adminUserAuthToken}`).send(newItemOnMenu);
  
        expect(correctMenuResponse.statusCode).toBe(200);
    }) 
+
+   test('Create an order', async () => {
+   
+    let newOrder = {"franchiseId": 2, "storeId":1, "items":[{ "menuId": 1, "description": "Veggie", "price": 0.05 }]}
+    const loginRes = await request(app).post('/api/order').set('Authorization', `Bearer ${testUserAuthToken}`).send(newOrder)
+
+    expect(loginRes.body.order.franchiseId).toBe(2)
+
+    let badOrder = {"franchiseId": 2, "storeId":1,"Nah":"bad","this one has to be bad":null, "items":[{ "menuId": null, "description": "Veggie", "price": 0.05 }]}
+    const badRes = await request(app).post('/api/order').set('Authorization', `Bearer BADAUTH?`).send(newOrder)
+
+    expect(badRes.status).toBe(401);
+
+    const badRes500 = await request(app).post('/api/order').set('Authorization', `Bearer ${testUserAuthToken}`).send(badOrder);
+
+    expect(badRes500.statusCode).toBe(500);
+    
+  });
