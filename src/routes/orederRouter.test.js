@@ -32,7 +32,7 @@ function randomName() {
     //register new user and use his auth token probably overkill, definitely actually
     const registerRes = await request(app).post('/api/auth').send(testUser);
     testUserAuthToken = registerRes.body.token;
-    userID = registerRes.body.id;
+   // userID = registerRes.body.id;
   });  
 
   test("get pizza menu",async ()=>{
