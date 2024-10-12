@@ -5,7 +5,6 @@ const { Role, DB } = require('../database/database.js');
 const testUser = { name: 'pizza diner', email: 'reg@test.com', password: 'a' };
 
 let testUserAuthToken = null;
-let userID = null;
 let adminUserAuthToken = null;
 let newAdminUser = null;
 
