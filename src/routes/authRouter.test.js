@@ -28,3 +28,51 @@ test('login', async () => {
  userID = loginRes.body.user.id;
 });
 
+test("update user",async ()=>{
+    
+  let emailNew = testUser.email = Math.random().toString(36).substring(2, 12) + '@test.com';
+  let userNew = {email:`${emailNew}`, password:`${testUser.password}`};
+  const loginRes = await request(app).put(`/api/auth/${userID}`).set('Authorization', `Bearer ${testUserAuthToken}`).send(userNew)
+  expect(loginRes.body.email).toBe(emailNew);
+
+  const WrongIDRes = await request(app).put(`/api/auth/wrong`).set('Authorization', `Bearer ${testUserAuthToken}`).send(userNew)
+  expect(WrongIDRes.status).toBe(403);
+ })
+
+   //these are the first endpoints
+   test('Unknown point', async () => {
+    const loginRes = await request(app).post('/api/auth/unknown').set('Authorization', `Bearer ${testUserAuthToken}`)
+    .send(testUser); 
+    expect(loginRes.status).toBe(404);
+    expect(loginRes.body.message).toBe('unknown endpoint') 
+  });
+
+ test('logout', async () => {
+  const loginRes = await request(app).delete('/api/auth').set('Authorization', `Bearer ${testUserAuthToken}`)
+  .send(testUser);
+  expect(loginRes.status).toBe(200);
+  expect(loginRes.text).toBe(`{"message":"logout successful"}`);
+});
+
+ //these are the first endpoints
+ test('Docs', async () => {  
+  const loginRes = await request(app).get('/api/docs')
+  //console.log(loginRes.body)
+  expect(loginRes.status).toBeDefined();
+});
+
+test('Welcome to JWT', async () => {
+    
+  const loginRes = await request(app).get('/')
+  expect(loginRes.status).toBe(200);
+  expect(loginRes.body.message).toBe('welcome to JWT Pizza')
+});
+
+test('Unauthorized dealer', async () => {
+  let emialNew = testUser.email = Math.random().toString(36).substring(2, 12) + '@test.com';
+  let userNew = {email:`${emialNew}`, password:`${testUser.password}`};
+  const loginRes = await request(app).put(`/api/auth/${userID}`).set('Authorization', `Bearer sdsdwer`).send(userNew)
+  expect(loginRes.body.message).toBe("unauthorized");
+});
+
+
